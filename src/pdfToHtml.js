@@ -19,7 +19,7 @@ async function pdfToHtml(url) {
 	// Destination HTML file name
 	const DestinationFile = './result.html';
 	// Set to `true` to get simplified HTML without CSS. Default is the rich HTML keeping the document design.
-	const PlainHtml = false;
+	const PlainHtml = true;
 	// Set to `true` if your document has the column layout like a newspaper.
 	const ColumnLayout = false;
 
