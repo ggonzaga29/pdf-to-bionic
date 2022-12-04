@@ -1,7 +1,7 @@
 const PDFParser = require('./PDFParser');
 
 (async () => {
-	const pdf = await new PDFParser('./example.pdf');
+	const pdf = await new PDFParser('https://puersa.com/assets/sample.pdf');
 	await pdf.init();
 	pdf.writeBionicHtml('./bionic.html', {
 		css: `
