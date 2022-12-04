@@ -101,6 +101,10 @@ class PDFParser {
 			);
 		});
 	}
+
+	htmlToPdf(htmlPath, writePath) {
+
+	}
 }
 
 module.exports = PDFParser;

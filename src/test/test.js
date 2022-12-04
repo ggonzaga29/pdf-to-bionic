@@ -1,9 +1,9 @@
-const PDFParser = require('./PDFParser');
+const PDFParser = require('../parser/PDFParser');
 
 (async () => {
 	const pdf = await new PDFParser('https://puersa.com/assets/sample.pdf');
 	await pdf.init();
-	pdf.writeBionicHtml('./bionic.html', {
+	pdf.writeBionicHtml('./html/bionic.html', {
 		css: `
 		body {
 			font-family: sans-serif;
