@@ -1,10 +1,10 @@
+const https = require('https');
+const path = require('path');
+const fs = require('fs');
+
+const request = require('request');
+
 const pdfToHtml = async () => {
-	const https = require('https');
-	const path = require('path');
-	const fs = require('fs');
-
-	const request = require('request');
-
 	const API_KEY =
 		'giangonzaga29@gmail.com_c2f2287eb2734703617b790887b046d7ebef83c29cc4b60342e9b0329202dcf05ae80810';
 
@@ -213,4 +213,9 @@ const pdfToHtml = async () => {
 		postRequest.write(jsonPayload);
 		postRequest.end();
 	}
+
+	const html = fs.readFileSync(destinationFile, 'utf8');	
+	return html;
 };
+
+module.exports = pdfToHtml;
