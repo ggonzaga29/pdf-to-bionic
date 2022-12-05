@@ -25,33 +25,35 @@ const firebaseConfig = {
 const firebase = initializeApp(firebaseConfig);
 const storage = getStorage(firebase);
 
-const pdfToHtml = require('./pdfToHtml.js');
+const PDFParser = require('./parser/PDFParser');
 
 app.post('/api/bionic', async (req, res) => {
 
-    console.log(req.body.url);
+    const pdf = new PDFParser(req.body.url);
+	await pdf.init();
+	pdf.writeBionicHtml('./bionic.html', {
+		css: `
+		body {
+			font-family: sans-serif;
+			font-size: 1.2rem;
+			
+		}
 
-    const url = req.body.url;
+		.container {
+			width: 980px;
+			margin: 0 auto;
+		}
 
-    await pdfToHtml(url);
-    // TODO: wait for pdfToHtml to finish before reading file
-    const content = fs.readFileSync('./result.html', (err) => {
-        if(err) {
-           console.log(err);
-        }
-    });
+		p {
+			margin: 0;
+			line-height: 1.5;
+			text-align: justify;
+			text-justify: inter-word;
+		}
+		`,
+	});
 
-    const [head, body] = content.toString().split("</head>");
-
-    const bionicBody = textVide(body);
-    const result = head.concat(bionicBody);
-
-    fs.writeFileSync("bionic.html", result, (err) => {
-        if(err) {
-           console.log(err);
-        }
-    });
-    // TODO: upload bionic.html to firebase, res.send url from firebase
+    // TODO: upload bionic.html (convert to pdf first?) to firebase, res.send url from firebase
 });
 
 app.listen(process.env.PORT || 3000);
