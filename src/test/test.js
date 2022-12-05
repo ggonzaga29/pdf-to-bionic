@@ -3,7 +3,7 @@ const PDFParser = require('../parser/PDFParser');
 (async () => {
 	const pdf = await new PDFParser('https://puersa.com/assets/sample.pdf');
 	await pdf.init();
-	pdf.writeBionicHtml('./html/bionic.html', {
+	pdf.writeBionicHtml('./bionic.html', {
 		css: `
 		body {
 			font-family: sans-serif;
