@@ -91,15 +91,14 @@ class PDFParser {
 		</body>
 		</html>`;
 
-		fs.writeFile(writePath, bionicHTML, (err) => {
-			if (err) {
-				throw new Error(err);
-			}
-
+		try {
+			fs.writeFileSync(writePath, bionicHTML);
 			console.log(
 				`PDFParser: Bionic HTML file written to ${writePath}`
 			);
-		});
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	htmlToPdf(htmlPath, writePath) {
