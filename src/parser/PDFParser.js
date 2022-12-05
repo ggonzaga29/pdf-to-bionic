@@ -62,6 +62,8 @@ class PDFParser {
 		this.version = result.version;
 		// PDF text
 		this.text = result.text;
+		// bionic html
+		this.bionicHtmlString = textVide(this.text);
 	}
 
 	writeBionicHtml(writePath = './bionic.html', options = {}) {
@@ -71,7 +73,6 @@ class PDFParser {
 			options.css = `<style>${options.css}</style>`;
 		}
 
-		const textVideResult = textVide(this.text);
 		const bionicHTML = `
 		<!DOCTYPE html>
 		<html lang="en">
@@ -85,7 +86,7 @@ class PDFParser {
 		<body>
 			<div class="container">
 				<p class="bionic-text">
-				${textVideResult}
+				${this.bionicHtmlString}
 				</p>
 			</div>
 		</body>
