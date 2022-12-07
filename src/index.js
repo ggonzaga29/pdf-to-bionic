@@ -50,7 +50,7 @@ app.post('/api/bionic', async (req, res) => {
 		}
 		`,
 	});
-	const storageRef = ref(storage, 'bionic/test.pdf');
+	const storageRef = ref(storage, `bionic/${pdf.filename}`);
 	uploadBytes(storageRef, file)
 		.then((snapshot) => {
 			getDownloadURL(snapshot.ref).then((url) => {

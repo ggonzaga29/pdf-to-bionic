@@ -1,4 +1,5 @@
 const fs = require('fs');
+const url = require('url');
 const path = require('path');
 
 const pdf = require('pdf-parse');
@@ -26,6 +27,7 @@ class PDFParser {
 			this.path = path.join(__dirname, pdfPath);
 		}
 
+		this.filename = ''
 		this.text = '';
 		this.numpages = 0;
 		this.info = '';
@@ -62,6 +64,8 @@ class PDFParser {
 			}
 		}
 
+		// orig file name
+		this.filename = path.posix.basename(url.parse(this.url).pathname);
 		// number of pages
 		this.numpages = result.numpages;
 		// number of rendered pages
@@ -92,7 +96,7 @@ class PDFParser {
 			<meta charset="UTF-8">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Bionic PDF</title>
+			<title>${this.info.title}</title>
 			${options.css ? options.css : ''} 
 		</head>
 		<body>
