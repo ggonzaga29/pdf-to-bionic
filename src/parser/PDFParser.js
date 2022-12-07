@@ -37,19 +37,30 @@ class PDFParser {
 		// if file is a url download file else read file
 		let result = null;
 		if (this.url) {
-			console.log(
-				'PDFParser: URL Detected - Downloading PDF file...'
-			);
-			const response = await fetch(this.url);
-			const buffer = await response.buffer();
-			result = await pdf(buffer);
+			try {
+				console.log(
+					'PDFParser: URL Detected - Downloading PDF file...'
+				);
+				const response = await fetch(this.url);
+				const buffer = await response.buffer();
+				result = await pdf(buffer);
+			} catch (error) {
+				console.log(error);
+				throw new Error(
+					'PDFParser: Error downloading PDF file. Check URL \n' +
+						error
+				);
+			}
 		} else {
-			console.log('PDFParser: Reading PDF file...');
-			const dataBuffer = fs.readFileSync(this.path);
-			result = await pdf(dataBuffer);
+			try {
+				console.log('PDFParser: Reading PDF file...');
+				const dataBuffer = fs.readFileSync(this.path);
+				result = await pdf(dataBuffer);
+			} catch (error) {
+				throw new Error('PDFParser: Error reading PDF file \n' + error);
+			}
 		}
 
-		// const result = await pdf(dataBuffer);
 		// number of pages
 		this.numpages = result.numpages;
 		// number of rendered pages
@@ -102,9 +113,7 @@ class PDFParser {
 		}
 	}
 
-	htmlToPdf(htmlPath, writePath) {
-
-	}
+	htmlToPdf(htmlPath, writePath) {}
 }
 
 module.exports = PDFParser;
