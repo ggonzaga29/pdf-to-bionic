@@ -14,7 +14,7 @@ const getBionic = async (apiKey, fileUrl) => {
 	});
 	const data = await res.json();
 	if(data.error != false) {
-		console.log(data.error);
+		console.log(data.message);
 		return;
 	}
 	const file = await fetch(data.url);

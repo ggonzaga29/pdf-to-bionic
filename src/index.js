@@ -33,6 +33,10 @@ app.post('/api/bionic', async (req, res) => {
     const file = await getBionic(pdfCoApiKey, req.body.url);
 	const filename = path.posix.basename(url.parse(req.body.url).pathname);
 
+	if(!file) {
+		res.sendStatus(500); // todo: improve error messages
+		return;
+	}
 
 	const storageRef = ref(storage, `bionic_files/${filename}`);
 	uploadBytes(storageRef, file)
