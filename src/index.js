@@ -34,7 +34,7 @@ app.post('/api/bionic', async (req, res) => {
 	const filename = path.posix.basename(url.parse(req.body.url).pathname);
 
 
-	const storageRef = ref(storage, `bionic/${filename}`);
+	const storageRef = ref(storage, `bionic_files/${filename}`);
 	uploadBytes(storageRef, file)
 		.then((snapshot) => {
 			getDownloadURL(snapshot.ref).then((url) => {
