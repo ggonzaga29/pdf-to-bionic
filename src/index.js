@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 
-const fs = require('fs');
+const url = require('url');
+const path = require('path');
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
@@ -10,6 +11,8 @@ app.use(cors());
 
 const { initializeApp } = require('firebase/app');
 const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage');
+
+const pdfCoApiKey = 'verynyze@gmail.com_71642099ff013c6a9b3bca59e96e4d540ca041f45ca4f78a5f4c7665002f67ef95a0573b';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAKwgJJTj4uktZOZhzYyXwka6370Y_IyYQ',
@@ -23,34 +26,15 @@ const firebaseConfig = {
 const firebase = initializeApp(firebaseConfig);
 const storage = getStorage(firebase);
 
-const PDFParser = require('./parser/PDFParser');
+const getBionic = require('./parser/pdfToBionic');
 
 app.post('/api/bionic', async (req, res) => {
 
-    const pdf = new PDFParser(req.body.url);
-	await pdf.init();
-	const file = await pdf.toBionic({
-		css: `
-		body {
-			font-family: sans-serif;
-			font-size: 1.2rem;
-			
-		}
+    const file = await getBionic(pdfCoApiKey, req.body.url);
+	const filename = path.posix.basename(url.parse(req.body.url).pathname);
 
-		.container {
-			width: 980px;
-			margin: 0 auto;
-		}
 
-		p {
-			margin: 0;
-			line-height: 1.5;
-			text-align: justify;
-			text-justify: inter-word;
-		}
-		`,
-	});
-	const storageRef = ref(storage, `bionic/${pdf.filename}`);
+	const storageRef = ref(storage, `bionic/${filename}`);
 	uploadBytes(storageRef, file)
 		.then((snapshot) => {
 			getDownloadURL(snapshot.ref).then((url) => {
