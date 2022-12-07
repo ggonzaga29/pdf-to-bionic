@@ -4,6 +4,7 @@ const path = require('path');
 const pdf = require('pdf-parse');
 const fetch = require('node-fetch');
 const { textVide } = require('text-vide');
+const html2pdf = require('html-pdf-node');
 
 /**
  * @param {string} path to file or url
@@ -66,7 +67,7 @@ class PDFParser {
 		this.bionicHtmlString = textVide(this.text);
 	}
 
-	writeBionicHtml(writePath = './bionic.html', options = {}) {
+	async toBionic(options = {}) {
 		if (!options.css || typeof options.css !== 'string') {
 			options.css = '';
 		} else {
@@ -92,18 +93,7 @@ class PDFParser {
 		</body>
 		</html>`;
 
-		try {
-			fs.writeFileSync(writePath, bionicHTML);
-			console.log(
-				`PDFParser: Bionic HTML file written to ${writePath}`
-			);
-		} catch (err) {
-			console.log(err);
-		}
-	}
-
-	htmlToPdf(htmlPath, writePath) {
-
+		return await html2pdf.generatePdf({ content: bionicHTML }, { format: 'A4' });
 	}
 }
 

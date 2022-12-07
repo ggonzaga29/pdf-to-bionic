@@ -3,15 +3,13 @@ const cors = require('cors');
 
 const fs = require('fs');
 
-const { textVide } = require('text-vide');
-
 const app = express();
 app.use(express.json({ limit: '50mb' }));
 
 app.use(cors());
 
 const { initializeApp } = require('firebase/app');
-const { getStorage } = require('firebase/storage');
+const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAKwgJJTj4uktZOZhzYyXwka6370Y_IyYQ',
@@ -31,7 +29,7 @@ app.post('/api/bionic', async (req, res) => {
 
     const pdf = new PDFParser(req.body.url);
 	await pdf.init();
-	pdf.writeBionicHtml('./bionic.html', {
+	const file = await pdf.toBionic({
 		css: `
 		body {
 			font-family: sans-serif;
@@ -52,8 +50,18 @@ app.post('/api/bionic', async (req, res) => {
 		}
 		`,
 	});
-
-    // TODO: upload bionic.html (convert to pdf first?) to firebase, res.send url from firebase
+	const storageRef = ref(storage, 'bionic/test.pdf');
+	uploadBytes(storageRef, file)
+		.then((snapshot) => {
+			getDownloadURL(snapshot.ref).then((url) => {
+				res.status(201).json({ url })
+			}).catch((error) => {
+				res.sendStatus(500);
+			})
+		})
+		.catch((error) => {
+			res.sendStatus(500);
+		});
 });
 
 app.listen(process.env.PORT || 3000);
