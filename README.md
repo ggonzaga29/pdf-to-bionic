@@ -1,7 +1,5 @@
 # bionic backend
 
-Install deps:
-
 ```
 npm start
 ```
