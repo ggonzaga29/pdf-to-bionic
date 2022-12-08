@@ -12,7 +12,7 @@ app.use(cors());
 const { initializeApp } = require('firebase/app');
 const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
-const pdfCoApiKey = 'verynyze@gmail.com_71642099ff013c6a9b3bca59e96e4d540ca041f45ca4f78a5f4c7665002f67ef95a0573b';
+const pdfCoApiKey = 'gsenoc@gmail.com_efed6aef4adbf607ae4e9f40de451999273e2926e8249a3b2f70de40e7cd1688f180efd2';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAKwgJJTj4uktZOZhzYyXwka6370Y_IyYQ',
