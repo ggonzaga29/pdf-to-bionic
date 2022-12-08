@@ -5,7 +5,13 @@ const html2pdf = require('html-pdf-node');
 
 
 const getBionic = async (apiKey, fileUrl) => {
-	const res = await fetch(`https://api.pdf.co/v1/pdf/convert/to/html?name=bionic.html&url=${fileUrl}`, {
+	console.log(`\nConverting from url: ${fileUrl}\n`);
+
+	const params = new URLSearchParams();
+	params.append('name', 'bionic.html');
+	params.append('url', fileUrl);
+	
+	const res = await fetch(`https://api.pdf.co/v1/pdf/convert/to/html?${params.toString()}`, {
 		method: 'POST',
 		headers: {
 			"x-api-key": apiKey,
