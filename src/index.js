@@ -35,22 +35,26 @@ const getBionic = require('./parser/pdfToBionic');
 
 app.post('/api/bionic', async (req, res) => {
   try {
-    const file = await getBionic(pdfCoApiKey, req.body.url);
+    const files = await getBionic(pdfCoApiKey, req.body.url);
     const filename = path.posix.basename(url.parse(req.body.url).pathname, ".pdf");
 
-    if (file.error) {
+    if (files.error) {
       const status = typeof file.status !== 'number' ? file.errorCode : file.status;
       res.status(status).json(file);
       return;
     }
 
     const pdfRef = ref(storage, `bionic_files/${filename}.pdf`);
-    const pdfSnapshot = await uploadBytes(pdfRef, file);
+    const pdfSnapshot = await uploadBytes(pdfRef, files.pdf);
     const pdfUrl = await getDownloadURL(pdfSnapshot.ref);
+
+    const htmlRef = ref(storage, `bionic_files/${filename}.html`);
+    const htmlSnapshot = await uploadBytes(htmlRef, files.html);
+    const htmlUrl = await getDownloadURL(htmlSnapshot.ref);
 
     console.log('Uploaded.');
 
-    res.status(201).json({ url: pdfUrl });
+    res.status(201).json({ url: pdfUrl, htmlUrl });
  
   } catch (err) {
     console.log(err);

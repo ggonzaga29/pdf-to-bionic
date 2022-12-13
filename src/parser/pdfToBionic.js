@@ -30,8 +30,10 @@ const getBionic = async (apiKey, fileUrl) => {
 	const bionicBody = textVide(body);
 	const bionicHtml = head.concat(head, "</head>", bionicBody);
 
+	const pdf = await html2pdf.generatePdf({ content: bionicHtml }, { format: 'A4' });
+
 	console.log('Conversion successful. Uploading...');
-	return await html2pdf.generatePdf({ content: bionicHtml }, { format: 'A4' });
+	return { pdf, html: buffer };
 }
 
 module.exports = getBionic;
