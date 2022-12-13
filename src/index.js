@@ -39,8 +39,8 @@ app.post('/api/bionic', async (req, res) => {
     const filename = path.posix.basename(url.parse(req.body.url).pathname, ".pdf");
 
     if (files.error) {
-      const status = typeof file.status !== 'number' ? file.errorCode : file.status;
-      res.status(status).json(file);
+      const status = typeof files.status !== 'number' ? files.errorCode : files.status;
+      res.status(status).json(files);
       return;
     }
 
