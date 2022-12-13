@@ -16,8 +16,8 @@ const {
   getDownloadURL,
 } = require('firebase/storage');
 
-const pdfCoApiKey =
-  'garysenoc@gmail.com_b4bc7f0b217beb30160e35af4c54ab786710c03cbbc37d9b30c5e385fc5f25275c1b5dcb';
+const pdfCoApiKey = process.env.PDFCOAPIKEY || 
+  'tetannuz@gmail.com_06afec6ab72c8477278a19818d03fba37fa02057fc86e1234d6904363699f7e442e83b5a';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAKwgJJTj4uktZOZhzYyXwka6370Y_IyYQ',
@@ -34,28 +34,32 @@ const storage = getStorage(firebase);
 const getBionic = require('./parser/pdfToBionic');
 
 app.post('/api/bionic', async (req, res) => {
-  const file = await getBionic(pdfCoApiKey, req.body.url);
-  const filename = path.posix.basename(url.parse(req.body.url).pathname);
+  try {
+    const file = await getBionic(pdfCoApiKey, req.body.url);
+    const filename = path.posix.basename(url.parse(req.body.url).pathname, ".pdf");
 
-  if (!file) {
-    res.sendStatus(500); // todo: improve error messages
-    return;
+    if (file.error) {
+      const status = typeof file.status !== 'number' ? file.errorCode : file.status;
+      res.status(status).json(file);
+      return;
+    }
+
+    const pdfRef = ref(storage, `bionic_files/${filename}.pdf`);
+    const pdfSnapshot = await uploadBytes(pdfRef, file);
+    const pdfUrl = await getDownloadURL(pdfSnapshot.ref);
+
+    console.log('Uploaded.');
+
+    res.status(201).json({ url: pdfUrl });
+ 
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ 
+      error: true,
+      message: 'Error occurred while converting or uploading. Please view server logs for more details.'
+    });
   }
 
-  const storageRef = ref(storage, `bionic_files/${filename}`);
-  uploadBytes(storageRef, file)
-    .then((snapshot) => {
-      getDownloadURL(snapshot.ref)
-        .then((url) => {
-          res.status(201).json({ url });
-        })
-        .catch((error) => {
-          res.sendStatus(500);
-        });
-    })
-    .catch((error) => {
-      res.sendStatus(500);
-    });
 });
 
 const port = process.env.PORT || 4000;

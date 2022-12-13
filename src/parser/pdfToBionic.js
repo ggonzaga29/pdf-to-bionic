@@ -5,7 +5,7 @@ const html2pdf = require('html-pdf-node');
 
 
 const getBionic = async (apiKey, fileUrl) => {
-	console.log(`\nConverting from url: ${fileUrl}\n`);
+	console.log(`\nConverting from url: ${fileUrl}`);
 
 	const params = new URLSearchParams();
 	params.append('name', 'bionic.html');
@@ -19,9 +19,8 @@ const getBionic = async (apiKey, fileUrl) => {
 		}
 	});
 	const data = await res.json();
-	if(data.error != false) {
-		console.log(data.message);
-		return;
+	if(data.error) {
+		return data;
 	}
 	const file = await fetch(data.url);
 	const buffer = await file.buffer();
@@ -30,6 +29,8 @@ const getBionic = async (apiKey, fileUrl) => {
 
 	const bionicBody = textVide(body);
 	const bionicHtml = head.concat(head, "</head>", bionicBody);
+
+	console.log('Conversion successful. Uploading...');
 	return await html2pdf.generatePdf({ content: bionicHtml }, { format: 'A4' });
 }
 
