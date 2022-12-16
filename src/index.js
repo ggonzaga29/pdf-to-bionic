@@ -31,11 +31,12 @@ const firebaseConfig = {
 const firebase = initializeApp(firebaseConfig);
 const storage = getStorage(firebase);
 
-const getBionic = require('./parser/pdfToBionic');
+const pdfToBionicWithApi = require('./parser/pdfToBionicWithApi');
+const pdfToBionicNoApi = require('./parser/pdfToBionicNoApi');
 
 app.post('/api/bionic', async (req, res) => {
   try {
-    const files = await getBionic(pdfCoApiKey, req.body.url);
+    const files = await pdfToBionicNoApi(req.body.url);
     const filename = path.posix.basename(url.parse(req.body.url).pathname, ".pdf");
 
     if (files.error) {
@@ -44,9 +45,9 @@ app.post('/api/bionic', async (req, res) => {
       return;
     }
 
-    const pdfRef = ref(storage, `bionic_files/${filename}.pdf`);
-    const pdfSnapshot = await uploadBytes(pdfRef, files.pdf);
-    const pdfUrl = await getDownloadURL(pdfSnapshot.ref);
+    // const pdfRef = ref(storage, `bionic_files/${filename}.pdf`);
+    // const pdfSnapshot = await uploadBytes(pdfRef, files.pdf);
+    // const pdfUrl = await getDownloadURL(pdfSnapshot.ref);
 
     const htmlRef = ref(storage, `bionic_files/${filename}.html`);
     const htmlSnapshot = await uploadBytes(htmlRef, files.html);
@@ -54,11 +55,11 @@ app.post('/api/bionic', async (req, res) => {
 
     console.log('Uploaded.');
 
-    res.status(201).json({ url: pdfUrl, htmlUrl });
- 
+    res.status(201).json({ htmlUrl });
+
   } catch (err) {
     console.log(err);
-    res.status(500).json({ 
+    res.status(500).json({
       error: true,
       message: 'Error occurred while converting or uploading. Please view server logs for more details.'
     });
